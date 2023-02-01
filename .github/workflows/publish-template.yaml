@@ -22,14 +22,19 @@ jobs:
       with:
         file: .github/config-template.yaml
 
-    - name: List Sver Tags
-      uses: aserto-dev/sver-action@v0.0.14
-      id: "sver"
+    - name: Calc Tags
+      id: meta
+      uses: docker/metadata-action@v4
       with:
-        docker_image: ${{ steps.template-config.outputs.repo }}
-        docker_registry: ${{ steps.template-config.outputs.server }}
-        docker_username: ${{ steps.template-config.outputs.username }}
-        docker_password: ${{ secrets.ASERTO_TEMPLATE_PUBLISH_KEY }}
+        images: |
+          ${{ steps.template-config.outputs.server }}/${{ steps.template-config.outputs.repo }}
+        flavor: |
+          latest=auto
+        tags: |
+          type=semver,pattern={{version}}
+          type=semver,pattern={{major}}.{{minor}}
+          type=semver,pattern={{major}}
+          type=sha
 
     - name: Oras Login
       id: "oras-login"
@@ -51,14 +56,15 @@ jobs:
     - name: Oras Push
       id: "oras-push"
       env:
-        REPO:   ${{ steps.template-config.outputs.repo }}
-        SERVER: ${{ steps.template-config.outputs.server }}
+        TARGET: ${{ steps.template-config.outputs.server }}/${{ steps.template-config.outputs.repo }}:${{ steps.meta.outputs.version }}
       run: |
-       while read -r tag; do
-          oras push "${SERVER}/${REPO}:${tag}" \
-          --annotation-file ./annotations.json \
-          --artifact-type application/vnd.oci.image.layer.v1.tar+gzip ./bundle.tar.gz
-        done < <(echo "${{ steps.sver.outputs.version }}")
+        oras push "${TARGET}" \
+        --annotation-file ./annotations.json \
+        --artifact-type application/vnd.oci.image.layer.v1.tar+gzip ./bundle.tar.gz
+        
+        while read -r tag; do
+          oras tag ${TARGET} ${tag}
+        done < <(echo "${{ steps.meta.outputs.tags }}")
 
     - name: Oras Logout
       id: "oras-logout"

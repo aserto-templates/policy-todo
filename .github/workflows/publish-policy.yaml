@@ -22,23 +22,19 @@ jobs:
       with:
         file: .github/config-policy.yaml
 
-    - name: List Sver Tags
-      uses: aserto-dev/sver-action@v0
-      id: "sver"
+    - name: Calc Tags
+      id: meta
+      uses: docker/metadata-action@v4
       with:
-        docker_image: ${{ steps.policy-config.outputs.repo }}
-        docker_registry: ${{ steps.policy-config.outputs.server }}
-        docker_username: ${{ steps.policy-config.outputs.username }}
-        docker_password: ${{ secrets.ASERTO_POLICY_PUBLISH_KEY }}
-
-    - name: Calculate image tags
-      id: "tags"
-      run: |
-        while read -r tag; do
-          tags="$tags ${{ steps.policy-config.outputs.repo }}:$tag"
-        done < <(echo "${{ steps.sver.outputs.version }}")
-
-        echo ::set-output name=target_tags::$tags
+        images: |
+          ${{ steps.policy-config.outputs.server }}/${{ steps.policy-config.outputs.repo }}
+        flavor: |
+          latest=auto
+        tags: |
+          type=semver,pattern={{version}}
+          type=semver,pattern={{major}}.{{minor}}
+          type=semver,pattern={{major}}
+          type=sha
 
     - name: Policy Login
       id: policy-login
@@ -63,7 +59,7 @@ jobs:
       uses: opcr-io/policy-tag-action@v2
       with:
         source_tag: ${{ steps.policy-config.outputs.repo }}
-        target_tags: ${{ steps.tags.outputs.target_tags }}
+        target_tags: ${{ steps.meta.outputs.tags }}
       env:
         POLICY_DEFAULT_DOMAIN: ${{ steps.policy-config.outputs.server }}
 
@@ -71,7 +67,7 @@ jobs:
       id: policy-push
       uses: opcr-io/policy-push-action@v2
       with:
-        tags: ${{ steps.tags.outputs.target_tags }}
+        tags: ${{ steps.meta.outputs.tags }}
       env:
         POLICY_DEFAULT_DOMAIN: ${{ steps.policy-config.outputs.server }}
 
