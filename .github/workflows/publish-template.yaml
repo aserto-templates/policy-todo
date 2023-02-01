@@ -22,14 +22,6 @@ jobs:
       with:
         file: .github/config-template.yaml
 
-    - name: Dump template config
-      id: dump-template-config
-      run: |
-        echo "server: ${{ steps.template-config.outputs.server }}"
-        echo "username: ${{ steps.template-config.outputs.username }}"
-        echo "repo: ${{ steps.template-config.outputs.repo }}"
-
-
     - name: List Sver Tags
       uses: aserto-dev/sver-action@v0.0.14
       id: "sver"
@@ -63,7 +55,6 @@ jobs:
         SERVER: ${{ steps.template-config.outputs.server }}
       run: |
        while read -r tag; do
-          echo "oras push ${SERVER}/${REPO}:${tag}" \
           oras push "${SERVER}/${REPO}:${tag}" \
           --annotation-file ./annotations.json \
           --artifact-type application/vnd.oci.image.layer.v1.tar+gzip ./bundle.tar.gz
