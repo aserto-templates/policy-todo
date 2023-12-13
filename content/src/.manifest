@@ -77,6 +77,20 @@
           }
         },
         {
+          "name": "ds.check",
+          "decl": {
+            "args": [
+              {
+                "type": "any"
+              }
+            ],
+            "result": {
+              "type": "boolean"
+            },
+            "type": "function"
+          }
+        },
+        {
           "name": "ds.check_permission",
           "decl": {
             "args": [
@@ -148,6 +162,20 @@
         },
         {
           "name": "ds.relation",
+          "decl": {
+            "args": [
+              {
+                "type": "any"
+              }
+            ],
+            "result": {
+              "type": "any"
+            },
+            "type": "function"
+          }
+        },
+        {
+          "name": "ds.relations",
           "decl": {
             "args": [
               {
