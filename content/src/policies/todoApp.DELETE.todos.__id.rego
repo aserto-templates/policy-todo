@@ -1,6 +1,6 @@
 package todoApp.DELETE.todos.__id
 
-# This policy determines whether the user can delete the todo identified by input.resource.id
+# This policy determines whether the user can delete the todo identified by input.resource.object_id
 
 import input.user
 import input.resource
