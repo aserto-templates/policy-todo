@@ -1,7 +1,7 @@
 package rebac.check
 
 # default to a closed system (deny by default)
-default allowed = false
+default allowed := false
 
 # resource context is expected in the following form:
 # {
@@ -9,7 +9,7 @@ default allowed = false
 #   "object_type": "object type that carries the relation or permission",
 #   "object_id": "id of object instance with type of object_type"
 # }
-allowed {
+allowed if {
   ds.check({
     "object_type": input.resource.object_type,
     "object_id": input.resource.object_id,

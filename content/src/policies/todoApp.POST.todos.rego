@@ -2,7 +2,7 @@ package todoApp.POST.todos
 
 # This policy determines whether the user can create todos
 
-default allowed = false
+default allowed := false
 
 # Only members of the "resource-creators" instance can create a new Todo.
 #
@@ -14,7 +14,7 @@ default allowed = false
 #   "relation": "member"
 # }
 
-allowed {
+allowed if {
   ds.check({
     "object_type": input.resource.object_type,
     "object_id": input.resource.object_id,
