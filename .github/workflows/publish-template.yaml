@@ -65,12 +65,10 @@ jobs:
         REPO:   ${{ steps.template-config.outputs.repo }}
         SERVER: ${{ steps.template-config.outputs.server }}
       run: |
-       while read -r tag; do
-          oras push "${SERVER}/${REPO}:${tag}" \
+        oras push "${SERVER}/${REPO}:$(echo '${{ steps.meta.outputs.json }}' | jq -r '[.tags[] | split(":")[1]] | join(",")')" \
           --annotation-file ./annotations.json \
           --config ./config.json \
           --artifact-type application/vnd.oci.image.layer.v1.tar+gzip ./bundle.tar.gz
-        done < <(echo "${{ steps.sver.outputs.version }}")
 
     - name: Oras Logout
       id: "oras-logout"
