@@ -12,7 +12,7 @@ default allowed = false
 # check if the user has the can_delete permission on the resource
 # (example of evaluating a permission on a specific resource)
 allowed {
-  check(user, "can_delete", resource.object_id)
+  check(user, "can_delete", "resource", resource.object_id)
 }
 
 # check if the user is a member of the admin group

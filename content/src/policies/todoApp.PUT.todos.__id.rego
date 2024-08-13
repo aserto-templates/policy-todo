@@ -13,7 +13,7 @@ default allowed = false
 # check if the user has the can_write permission on the resource
 # (example of evaluating a permission on a specific resource)
 allowed {
-  check(user, "can_write", resource.object_id)
+  check(user, "can_write", "resource", resource.object_id)
 }
 
 # check if the user is a member of the allowed groups
