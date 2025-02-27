@@ -1,6 +1,8 @@
 package todoApp.common
 
-is_member_of(user, group) := x {
+import future.keywords.if
+
+is_member_of(user, group) := x if {
   x := ds.check({
     "object_id": group,
     "object_type": "group",
@@ -10,7 +12,7 @@ is_member_of(user, group) := x {
   })
 }
 
-check(user, permission, todo) := x {
+check(user, permission, todo) := x if {
   x := ds.check({
     "object_id": todo,
     "object_type": "resource",
